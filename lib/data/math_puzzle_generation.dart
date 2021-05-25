@@ -17,25 +17,33 @@ class MathPuzzleGeneration {
           list.add(number);
           answer += number;
         }
-        break;
+        return {
+          'numbers': list,
+          'answer': answer,
+          'numTimes': 3,
+        };
       case MathChallengeType.Medium:
         for (var i = 0; i < 3; i++) {
           final number = 10 + random.nextInt(90);
           list.add(number);
           answer += number;
         }
-        break;
+        return {
+          'numbers': list,
+          'answer': answer,
+          'numTimes': 3,
+        };
       case MathChallengeType.Hard:
         for (var i = 0; i < 5; i++) {
           final number = 10 + random.nextInt(90);
           list.add(number);
           answer += number;
         }
-        break;
+        return {
+          'numbers': list,
+          'answer': answer,
+          'numTimes': 5,
+        };
     }
-    return {
-      'numbers': list,
-      'answer': answer,
-    };
   }
 }

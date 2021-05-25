@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:group_button/group_button.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'dart:math';
 
 import '../data/alarms_provider.dart';
 
@@ -64,25 +65,29 @@ class _AddAlarmState extends State<AddAlarm> {
     );
   }
 
-  Future<void> _showFullScreenNotification(Duration delay) async {
+  Future<void> _showFullScreenNotification(
+      Duration delay, String mathChallengeType) async {
     await widget.flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        tz.TZDateTime.now(tz.local).add(delay),
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'full screen channel id',
-            'full screen channel name',
-            'full screen channel description',
-            priority: Priority.high,
-            importance: Importance.high,
-            fullScreenIntent: true,
-          ),
+      Random().nextInt(pow(2, 31).toInt()),
+      'scheduled title',
+      'scheduled body',
+      tz.TZDateTime.now(tz.local).add(delay),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'full screen channel id',
+          'full screen channel name',
+          'full screen channel description',
+          priority: Priority.high,
+          importance: Importance.high,
+          fullScreenIntent: true,
+          playSound: false,
         ),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: mathChallengeType,
+    );
   }
 
   void _saveAlarm(TimeOfDay? time) {
@@ -102,7 +107,11 @@ class _AddAlarmState extends State<AddAlarm> {
       hours: newAlarm.hour - TimeOfDay.now().hour,
       minutes: newAlarm.minute - TimeOfDay.now().minute,
     );
-    _showFullScreenNotification(delay);
+    _showFullScreenNotification(
+      delay,
+      newAlarm.mathChallengeType.index.toString(),
+    );
+    print(newAlarm.mathChallengeType);
     Navigator.of(context).pop();
   }
 
@@ -211,7 +220,8 @@ class _AddAlarmState extends State<AddAlarm> {
             GroupButton(
               isRadio: true,
               spacing: 10,
-              onSelected: (i, _) => AlarmsProvider.getMathChallengeType(i),
+              onSelected: (i, _) =>
+                  _mathChallengeType = AlarmsProvider.getMathChallengeType(i),
               buttons: ['EASY', 'MEDIUM', 'HARD'],
               borderRadius: BorderRadius.circular(10),
               selectedTextStyle: TextStyle(
@@ -242,7 +252,6 @@ class _AddAlarmState extends State<AddAlarm> {
                             ),
                           ],
                           content: Text('Please choose a time!'),
-                          // title: Text('Ring time not set!'),
                         ),
                       );
                     }

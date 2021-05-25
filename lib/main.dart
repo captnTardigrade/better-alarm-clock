@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:rxdart/rxdart.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'screens/puzzle_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/add_new_alarm_screen.dart';
 import 'data/alarms_provider.dart';
+import 'screens/add_new_alarm_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/puzzle_screen.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -38,7 +38,6 @@ class ReceivedNotification {
 
 String? selectedNotificationPayload;
 Future<void> main() async {
-  // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
 
   await _configureLocalTimeZone();
@@ -58,25 +57,14 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
-    print('Hello');
-    print('$initialRoute');
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
     selectedNotificationPayload = payload;
     selectNotificationSubject.add(payload);
   });
-  // runApp(
-  //   MaterialApp(
-  //     initialRoute: initialRoute,
-  //     routes: <String, WidgetBuilder>{
-  //       HomeScreen.routeName: (_) => HomeScreen(),
-  //       PuzzleScreen.routeName: (_) => PuzzleScreen()
-  //     },
-  //   ),
-  // );
   if (initialRoute == PuzzleScreen.routeName) {
-    FlutterRingtonePlayer.playAlarm(volume: 1);
+    await FlutterRingtonePlayer.playAlarm(volume: 1);
   }
   runApp(
     ChangeNotifierProvider(
@@ -95,9 +83,12 @@ Future<void> main() async {
         ),
         initialRoute: initialRoute,
         routes: {
-          HomeScreen.routeName: (_) =>
-              HomeScreen(flutterLocalNotificationsPlugin),
-          PuzzleScreen.routeName: (_) => PuzzleScreen(),
+          HomeScreen.routeName: (_) => HomeScreen(
+                selectNotificationSubject,
+                flutterLocalNotificationsPlugin,
+              ),
+          PuzzleScreen.routeName: (_) =>
+              PuzzleScreen(selectedNotificationPayload),
           AddAlarm.routeName: (_) => AddAlarm(flutterLocalNotificationsPlugin),
         },
       ),

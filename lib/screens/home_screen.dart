@@ -1,16 +1,19 @@
+import 'puzzle_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
+import 'package:rxdart/rxdart.dart';
 
 import '../data/alarms_provider.dart';
 import 'add_new_alarm_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/';
+  final BehaviorSubject<String?> selectNotificationSubject;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  HomeScreen(this.flutterLocalNotificationsPlugin);
+  HomeScreen(
+      this.selectNotificationSubject, this.flutterLocalNotificationsPlugin);
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -23,31 +26,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _alarmsFuture = _obtainAlarmsFuture();
     super.initState();
+    _alarmsFuture = _obtainAlarmsFuture();
+    _configureSelectNotificationSubject();
   }
 
-  void _addDelayedAlarm() async {
-    await widget.flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        tz.TZDateTime.now(tz.local).add(
-          const Duration(seconds: 5),
-        ),
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'full screen channel id',
-            'full screen channel name',
-            'full screen channel description',
-            priority: Priority.high,
-            importance: Importance.high,
-            fullScreenIntent: true,
-          ),
-        ),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+  void _configureSelectNotificationSubject() {
+    widget.selectNotificationSubject.stream.listen((String? payload) async {
+      await Navigator.pushNamed(
+        context,
+        PuzzleScreen.routeName,
+        arguments: payload,
+      );
+    });
   }
 
   @override
@@ -133,10 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addDelayedAlarm,
-        child: Icon(Icons.add),
-      ),
     );
   }
 }

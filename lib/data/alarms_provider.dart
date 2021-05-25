@@ -31,7 +31,7 @@ class Alarm {
       'id': id,
       'hour': hour,
       'minute': minute,
-      'repeatingDays': repeatingDays.isEmpty ? '\$' : repeatingDays.join(' '),
+      'repeatingDays': repeatingDays.isEmpty ? '' : repeatingDays.join(' '),
       'isRingingToday': isRingingToday ? 1 : 0,
       'mathChallenge': mathChallengeType.index,
     };
@@ -66,6 +66,23 @@ class AlarmsProvider with ChangeNotifier {
     _alarms.removeWhere((alarm) => alarm.id == id);
     await DBHelper.delete('alarms', id);
     notifyListeners();
+  }
+
+  Future<Alarm> getAlarmById(String alarmId) async {
+    final dataList = await DBHelper.getData('alarms');
+    final alarms = dataList
+        .map(
+          (alarm) => Alarm(
+            id: alarm['id'],
+            hour: alarm['hour'],
+            minute: alarm['minute'],
+            repeatingDays: alarm['repeatingDays'].split(r' '),
+            isRingingToday: alarm['isRingingToday'] == 0 ? false : true,
+            mathChallengeType: getMathChallengeType(alarm['mathChallenge']),
+          ),
+        )
+        .toList();
+    return alarms.firstWhere((element) => element.id == alarmId);
   }
 
   Future<void> fetchAndSetAlarms() async {
