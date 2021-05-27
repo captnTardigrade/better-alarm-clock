@@ -10,6 +10,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'data/alarms_provider.dart';
 import 'screens/add_new_alarm_screen.dart';
+import 'screens/edit_alarm_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/puzzle_screen.dart';
 
@@ -57,9 +58,6 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
-    }
     selectedNotificationPayload = payload;
     selectNotificationSubject.add(payload);
   });
@@ -68,7 +66,7 @@ Future<void> main() async {
   }
   runApp(
     ChangeNotifierProvider(
-      create: (context) => AlarmsProvider(),
+      create: (context) => AlarmsProvider(flutterLocalNotificationsPlugin),
       builder: (context, child) => MaterialApp(
         theme: ThemeData(
           textTheme: Typography.material2018().black,
@@ -85,11 +83,11 @@ Future<void> main() async {
         routes: {
           HomeScreen.routeName: (_) => HomeScreen(
                 selectNotificationSubject,
-                flutterLocalNotificationsPlugin,
               ),
           PuzzleScreen.routeName: (_) =>
               PuzzleScreen(selectedNotificationPayload),
-          AddAlarm.routeName: (_) => AddAlarm(flutterLocalNotificationsPlugin),
+          AddAlarm.routeName: (_) => AddAlarm(),
+          EditAlarm.routeName: (_) => EditAlarm(),
         },
       ),
     ),

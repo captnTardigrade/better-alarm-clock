@@ -1,32 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:provider/provider.dart';
-import 'package:group_button/group_button.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:group_button/group_button.dart';
+import 'package:provider/provider.dart';
 
 import '../data/alarms_provider.dart';
 
-void callback() async {
-  FlutterRingtonePlayer.playAlarm(
-    looping: false,
-    asAlarm: true,
-    volume: 1,
-  );
-
-  await Future.delayed(Duration(seconds: 20), () {
-    FlutterRingtonePlayer.stop();
-  });
-}
-
 class AddAlarm extends StatefulWidget {
   static const routeName = '/add-alarm';
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
-  AddAlarm(this.flutterLocalNotificationsPlugin);
-
   @override
   _AddAlarmState createState() => _AddAlarmState();
 }
@@ -42,7 +23,7 @@ class _AddAlarmState extends State<AddAlarm> {
     'Saturday'
   ];
   TimeOfDay? _timeOfDay;
-  bool _isRingingToday = false;
+  bool _isRingingToday = true;
   MathChallengeType _mathChallengeType = MathChallengeType.Easy;
   var _repeatingDays = [
     false,
@@ -65,35 +46,12 @@ class _AddAlarmState extends State<AddAlarm> {
     );
   }
 
-  Future<void> _showFullScreenNotification(
-      Duration delay, String mathChallengeType) async {
-    await widget.flutterLocalNotificationsPlugin.zonedSchedule(
-      Random().nextInt(pow(2, 31).toInt()),
-      'scheduled title',
-      'scheduled body',
-      tz.TZDateTime.now(tz.local).add(delay),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'full screen channel id',
-          'full screen channel name',
-          'full screen channel description',
-          priority: Priority.high,
-          importance: Importance.high,
-          fullScreenIntent: true,
-          playSound: false,
-        ),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      payload: mathChallengeType,
-    );
-  }
-
   void _saveAlarm(TimeOfDay? time) {
     if (time == null) throw 'Time not set error';
     final newAlarm = Alarm(
-      id: AlarmsProvider.uuid.v1(),
+      id: Random(DateTime.now().millisecondsSinceEpoch).nextInt(
+        pow(2, 31).toInt(),
+      ),
       hour: time.hour,
       minute: time.minute,
       repeatingDays: daysOfWeek
@@ -101,17 +59,9 @@ class _AddAlarmState extends State<AddAlarm> {
           .toList(),
       isRingingToday: _isRingingToday,
       mathChallengeType: _mathChallengeType,
+      isEnabled: true,
     );
     Provider.of<AlarmsProvider>(context, listen: false).addAlarm(newAlarm);
-    final delay = Duration(
-      hours: newAlarm.hour - TimeOfDay.now().hour,
-      minutes: newAlarm.minute - TimeOfDay.now().minute,
-    );
-    _showFullScreenNotification(
-      delay,
-      newAlarm.mathChallengeType.index.toString(),
-    );
-    print(newAlarm.mathChallengeType);
     Navigator.of(context).pop();
   }
 

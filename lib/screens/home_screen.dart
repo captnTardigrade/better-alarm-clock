@@ -1,6 +1,7 @@
+import 'edit_alarm_screen.dart';
+
 import 'puzzle_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -11,9 +12,7 @@ import 'add_new_alarm_screen.dart';
 class HomeScreen extends StatefulWidget {
   static const routeName = '/';
   final BehaviorSubject<String?> selectNotificationSubject;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  HomeScreen(
-      this.selectNotificationSubject, this.flutterLocalNotificationsPlugin);
+  HomeScreen(this.selectNotificationSubject);
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -73,6 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
               return ListView.builder(
                 itemCount: alarms.length,
                 itemBuilder: (context, index) => ListTile(
+                  onTap: () => Navigator.of(context).pushNamed(
+                      EditAlarm.routeName,
+                      arguments: alarms[index].id),
                   minVerticalPadding: 10,
                   title: Text(
                     DateFormat('hh:mm a').format(
@@ -82,26 +84,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: Theme.of(context).textTheme.headline4,
                     textAlign: TextAlign.center,
                   ),
-                  subtitle: alarms[index].repeatingDays.isNotEmpty
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: alarms[index]
-                              .repeatingDays
-                              .map(
-                                (day) => Text(
-                                  '${day[0]} ',
-                                ),
-                              )
-                              .toList())
-                      : Center(child: Text('Not Repeating')),
+                  subtitle: Text(
+                    alarms[index].repeatingDays.isEmpty ||
+                            alarms[index].repeatingDays.first.isEmpty
+                        ? 'Not repeating'
+                        : alarms[index]
+                            .repeatingDays
+                            .map((e) => e[0])
+                            .join(' '),
+                    textAlign: TextAlign.center,
+                  ),
+                  leading: AlarmToggleButton(alarms[index]),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {},
-                      ),
                       IconButton(
                         icon: Icon(
                           Icons.delete,
@@ -124,6 +120,62 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
           }),
+    );
+  }
+}
+
+class AlarmToggleButton extends StatefulWidget {
+  final Alarm alarm;
+  AlarmToggleButton(this.alarm);
+  @override
+  _AlarmToggleButtonState createState() => _AlarmToggleButtonState();
+}
+
+class _AlarmToggleButtonState extends State<AlarmToggleButton> {
+  final daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+  ];
+
+  var _isEnabled;
+
+  @override
+  void initState() {
+    _isEnabled = widget.alarm.isEnabled;
+    super.initState();
+  }
+
+  void _toggle() async {
+    final alarmsProvider = Provider.of<AlarmsProvider>(context, listen: false);
+    setState(() {
+      _isEnabled = !_isEnabled;
+    });
+    final alarm = Alarm(
+      id: widget.alarm.id,
+      hour: widget.alarm.hour,
+      minute: widget.alarm.minute,
+      repeatingDays: widget.alarm.repeatingDays,
+      isRingingToday: widget.alarm.isRingingToday,
+      mathChallengeType: widget.alarm.mathChallengeType,
+      isEnabled: _isEnabled,
+    );
+    alarmsProvider.toggleEnableStatus(alarm);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        _isEnabled ? Icons.toggle_on : Icons.toggle_off,
+        color: _isEnabled ? Theme.of(context).primaryColor : null,
+        size: 40,
+      ),
+      onPressed: _toggle,
     );
   }
 }
