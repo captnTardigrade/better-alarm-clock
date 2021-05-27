@@ -15,18 +15,18 @@ class Alarm {
   int hour;
   int minute;
   List<String> repeatingDays;
-  bool isRingingToday;
   bool isEnabled;
   MathChallengeType mathChallengeType;
+  int numPuzzles;
 
   Alarm({
     required this.id,
     required this.hour,
     required this.minute,
     required this.repeatingDays,
-    required this.isRingingToday,
     required this.mathChallengeType,
     required this.isEnabled,
+    required this.numPuzzles,
   });
 
   Map<String, Object> get data {
@@ -35,9 +35,9 @@ class Alarm {
       'hour': hour,
       'minute': minute,
       'repeatingDays': repeatingDays.isEmpty ? '' : repeatingDays.join(' '),
-      'isRingingToday': isRingingToday ? 1 : 0,
       'mathChallenge': mathChallengeType.index,
       'isEnabled': isEnabled ? 1 : 0,
+      'numPuzzles': numPuzzles,
     };
   }
 }
@@ -97,9 +97,9 @@ class AlarmsProvider with ChangeNotifier {
             hour: alarm['hour'],
             minute: alarm['minute'],
             repeatingDays: alarm['repeatingDays'].split(r' '),
-            isRingingToday: alarm['isRingingToday'] == 0 ? false : true,
             mathChallengeType: getMathChallengeType(alarm['mathChallenge']),
             isEnabled: alarm['isEnabled'] == 0 ? false : true,
+            numPuzzles: alarm['numPuzzles'],
           ),
         )
         .toList();
@@ -115,9 +115,9 @@ class AlarmsProvider with ChangeNotifier {
             hour: alarm['hour'],
             minute: alarm['minute'],
             repeatingDays: alarm['repeatingDays'].split(r' '),
-            isRingingToday: alarm['isRingingToday'] == 0 ? false : true,
             mathChallengeType: getMathChallengeType(alarm['mathChallenge']),
             isEnabled: alarm['isEnabled'] == 0 ? false : true,
+            numPuzzles: alarm['numPuzzles'],
           ),
         )
         .toList();
@@ -168,7 +168,8 @@ class AlarmsProvider with ChangeNotifier {
       int alarmId,
       String mathChallengeType,
       List<String> repeatingDays,
-      TimeOfDay time) async {
+      TimeOfDay time,
+      String numRingTimes) async {
     if (repeatingDays.isEmpty || repeatingDays.first.isEmpty) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         alarmId,
@@ -189,7 +190,7 @@ class AlarmsProvider with ChangeNotifier {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        payload: mathChallengeType,
+        payload: mathChallengeType + ' ' + numRingTimes,
       );
     } else if (repeatingDays.length == 7) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -211,7 +212,7 @@ class AlarmsProvider with ChangeNotifier {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         androidAllowWhileIdle: true,
-        payload: mathChallengeType,
+        payload: mathChallengeType + ' ' + numRingTimes,
         matchDateTimeComponents: DateTimeComponents.time,
       );
     } else
@@ -236,7 +237,7 @@ class AlarmsProvider with ChangeNotifier {
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-          payload: mathChallengeType,
+          payload: mathChallengeType + ' ' + numRingTimes,
         );
       }
   }
@@ -250,6 +251,7 @@ class AlarmsProvider with ChangeNotifier {
         hour: alarm.hour,
         minute: alarm.minute,
       ),
+      alarm.numPuzzles.toString(),
     );
   }
 

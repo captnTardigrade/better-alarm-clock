@@ -25,7 +25,9 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     super.initState();
     if (_isInit) {
       FlutterRingtonePlayer.playAlarm(volume: 1);
-      _payload = widget.payload;
+      final data = widget.payload!.split(' ');
+      numRingTimes = int.parse(data[1]) - 1;
+      _payload = data[0];
       puzzle = MathPuzzleGeneration(
         AlarmsProvider.getMathChallengeType(
           int.parse(_payload!),
@@ -69,7 +71,6 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    numRingTimes = puzzle['numTimes'];
     final puzzleText = (puzzle['numbers'] as List<int>).join(' + ');
     return WillPopScope(
       onWillPop: () async => false,
@@ -95,11 +96,14 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                   Text(
                     puzzleText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                    ),
+                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                          color: Colors.black,
+                        ),
                   ),
                   TextFormField(
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Colors.black,
+                        ),
                     keyboardType: TextInputType.number,
                     controller: _textController,
                     focusNode: _focusNode,

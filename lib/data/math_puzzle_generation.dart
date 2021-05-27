@@ -20,7 +20,6 @@ class MathPuzzleGeneration {
         return {
           'numbers': list,
           'answer': answer,
-          'numTimes': 3,
         };
       case MathChallengeType.Medium:
         for (var i = 0; i < 3; i++) {
@@ -31,7 +30,6 @@ class MathPuzzleGeneration {
         return {
           'numbers': list,
           'answer': answer,
-          'numTimes': 3,
         };
       case MathChallengeType.Hard:
         for (var i = 0; i < 5; i++) {
@@ -42,7 +40,6 @@ class MathPuzzleGeneration {
         return {
           'numbers': list,
           'answer': answer,
-          'numTimes': 5,
         };
     }
   }

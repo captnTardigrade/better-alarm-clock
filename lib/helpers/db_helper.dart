@@ -9,7 +9,7 @@ class DBHelper {
     return openDatabase(
       path.join(dbPath, 'alarms.db'),
       onCreate: (db, version) => db.execute(
-          'CREATE TABLE alarms(id INTEGER PRIMARY KEY, hour INTEGER, minute INTEGER, repeatingDays TEXT, isRingingToday INTEGER, mathChallenge INTEGER, isEnabled INTEGER)'),
+          'CREATE TABLE alarms(id INTEGER PRIMARY KEY, hour INTEGER, minute INTEGER, repeatingDays TEXT, numPuzzles INTEGER, mathChallenge INTEGER, isEnabled INTEGER)'),
       version: 1,
     );
   }

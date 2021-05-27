@@ -116,9 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return Center(
                 child: Text(
                   'No alarms added yet!',
-                  style: TextStyle(
-                      // fontSize: Theme.of(context).textTheme.headline5!.fontSize,
-                      ),
+                  style: Theme.of(context).textTheme.headline5,
                 ),
               );
           }),
@@ -162,9 +160,9 @@ class _AlarmToggleButtonState extends State<AlarmToggleButton> {
       hour: widget.alarm.hour,
       minute: widget.alarm.minute,
       repeatingDays: widget.alarm.repeatingDays,
-      isRingingToday: widget.alarm.isRingingToday,
       mathChallengeType: widget.alarm.mathChallengeType,
       isEnabled: _isEnabled,
+      numPuzzles: widget.alarm.numPuzzles,
     );
     alarmsProvider.toggleEnableStatus(alarm);
   }

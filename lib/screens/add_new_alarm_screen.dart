@@ -4,6 +4,7 @@ import 'package:better_alarm_clock/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import 'package:provider/provider.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 import '../data/alarms_provider.dart';
 
@@ -24,7 +25,6 @@ class _AddAlarmState extends State<AddAlarm> {
     'Saturday'
   ];
   TimeOfDay? _timeOfDay;
-  bool _isRingingToday = true;
   MathChallengeType _mathChallengeType = MathChallengeType.Easy;
   var _repeatingDays = [
     false,
@@ -35,6 +35,8 @@ class _AddAlarmState extends State<AddAlarm> {
     false,
     false,
   ];
+
+  var _numPuzzles = 3;
 
   Future<void> setTime(BuildContext context) async {
     final time = await showTimePicker(
@@ -60,9 +62,9 @@ class _AddAlarmState extends State<AddAlarm> {
       repeatingDays: daysOfWeek
           .where((element) => _repeatingDays[daysOfWeek.indexOf(element)])
           .toList(),
-      isRingingToday: _isRingingToday,
       mathChallengeType: _mathChallengeType,
       isEnabled: true,
+      numPuzzles: _numPuzzles,
     );
     Provider.of<AlarmsProvider>(context, listen: false).addAlarm(newAlarm);
     Navigator.of(context).pop();
@@ -140,6 +142,16 @@ class _AddAlarmState extends State<AddAlarm> {
                   ),
                 )
                 .toList(),
+          ),
+          NumberPicker(
+            infiniteLoop: true,
+            axis: Axis.horizontal,
+            minValue: 3,
+            maxValue: 25,
+            value: _numPuzzles,
+            onChanged: (value) => setState(() {
+              _numPuzzles = value;
+            }),
           ),
           Text(
             'Math puzzle level',
