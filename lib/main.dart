@@ -69,13 +69,25 @@ Future<void> main() async {
       create: (context) => AlarmsProvider(flutterLocalNotificationsPlugin),
       builder: (context, child) => MaterialApp(
         theme: ThemeData(
-          textTheme: Typography.material2018().black,
-          fontFamily: GoogleFonts.roboto().fontFamily,
           primaryColor: Color(0xffBB86FC),
-          appBarTheme: AppBarTheme(
-            titleTextStyle: Typography.material2018().white.headline6,
-            actionsIconTheme: IconThemeData(
-              color: Colors.white,
+          textTheme: Typography.material2018().white,
+          fontFamily: GoogleFonts.roboto().fontFamily,
+          canvasColor: Colors.black,
+          iconTheme: IconThemeData(color: Colors.white),
+          timePickerTheme: TimePickerThemeData(
+            backgroundColor: Colors.black,
+            dialHandColor: Colors.purple,
+            dialTextColor: Colors.white,
+            hourMinuteTextColor: Colors.purple,
+            dayPeriodColor: MyColor(),
+            dayPeriodTextColor: DayPeriodTextColor(),
+            entryModeIconColor: Colors.white,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: TextStyle(
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
         ),
@@ -98,4 +110,31 @@ Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
   final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
+}
+
+class MyColor extends MaterialStateColor {
+  const MyColor() : super(_defaultColor);
+
+  static const int _defaultColor = 0xffFFEB3A;
+  @override
+  Color resolve(Set<MaterialState> states) {
+    if (states.contains(MaterialState.selected)) {
+      return const Color(0xffBB86FC);
+    }
+    return const Color(0xff0000);
+  }
+}
+
+class DayPeriodTextColor extends MaterialStateColor {
+  const DayPeriodTextColor() : super(_defaultColor);
+
+  static const _defaultColor = 0xffffff;
+
+  @override
+  Color resolve(Set<MaterialState> states) {
+    if (states.contains(MaterialState.selected)) {
+      return Colors.black;
+    }
+    return Colors.white;
+  }
 }

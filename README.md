@@ -1,10 +1,10 @@
-# better_alarm_clock
+# Better Alarm Clock
 
-A Better Alarm Clock
+A better alarm clock  
+I made this app because I could not find one without advertisements and also written in flutter.
 
-## Getting Started
-# TODO
-- [ ] Fix the weird issue of tapping and untapping of the keyboard in puzzle screen
+## TODO
+- [x] Fix the weird issue of tapping and untapping of the keyboard in puzzle screen
 - [ ] Add animations wherever appropriate
 - [ ] Improve the UI theme
 

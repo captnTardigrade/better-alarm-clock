@@ -1,3 +1,5 @@
+import 'package:better_alarm_clock/widgets/appBar.dart';
+
 import 'edit_alarm_screen.dart';
 
 import 'puzzle_screen.dart';
@@ -45,19 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final alarmsProvider = Provider.of<AlarmsProvider>(context);
     final alarms = alarmsProvider.alarms;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Better alarm clock',
-          style: Theme.of(context).appBarTheme.titleTextStyle,
-        ),
-        actions: [
+      appBar: buildAppBar(
+        context,
+        [
           IconButton(
             icon: Icon(
               Icons.add,
-              color: Theme.of(context).appBarTheme.actionsIconTheme!.color,
+              color: Theme.of(context).iconTheme.color,
             ),
             onPressed: () =>
                 Navigator.of(context).pushNamed(AddAlarm.routeName),
+          ),
+          SizedBox(
+            width: 10,
           ),
         ],
       ),
@@ -115,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text(
                   'No alarms added yet!',
                   style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.headline5!.fontSize,
-                  ),
+                      // fontSize: Theme.of(context).textTheme.headline5!.fontSize,
+                      ),
                 ),
               );
           }),
@@ -172,7 +174,7 @@ class _AlarmToggleButtonState extends State<AlarmToggleButton> {
     return IconButton(
       icon: Icon(
         _isEnabled ? Icons.toggle_on : Icons.toggle_off,
-        color: _isEnabled ? Theme.of(context).primaryColor : null,
+        color: _isEnabled ? Theme.of(context).primaryColor : Colors.white,
         size: 40,
       ),
       onPressed: _toggle,

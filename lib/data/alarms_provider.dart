@@ -74,11 +74,11 @@ class AlarmsProvider with ChangeNotifier {
     }
   }
 
-  void addAlarm(Alarm alarm) async {
+  void addAlarm(Alarm alarm) {
     _alarms.add(alarm);
     enableAlarm(alarm);
     notifyListeners();
-    await DBHelper.insert('alarms', alarm.data);
+    DBHelper.insert('alarms', alarm.data);
   }
 
   Future<void> deleteAlarm(int id) async {
@@ -172,14 +172,14 @@ class AlarmsProvider with ChangeNotifier {
     if (repeatingDays.isEmpty || repeatingDays.first.isEmpty) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         alarmId,
-        'scheduled title',
-        'scheduled body',
+        'THE ALARM\'S RINGING!',
+        'WAKE UP',
         _nextInstanceOfTime(time),
         const NotificationDetails(
           android: AndroidNotificationDetails(
-            'full screen channel id',
-            'full screen channel name',
-            'full screen channel description',
+            '42',
+            'Better alarm clock',
+            'Made with flutter',
             priority: Priority.high,
             importance: Importance.high,
             fullScreenIntent: true,
@@ -191,18 +191,41 @@ class AlarmsProvider with ChangeNotifier {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: mathChallengeType,
       );
+    } else if (repeatingDays.length == 7) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        alarmId,
+        'THE ALARM\'S RINGING',
+        'WAKE UP',
+        _nextInstanceOfTime(time),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            '42',
+            'Better alarm clock',
+            'Made with flutter',
+            playSound: false,
+            fullScreenIntent: true,
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+        ),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true,
+        payload: mathChallengeType,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
     } else
       for (var day in repeatingDays) {
         await flutterLocalNotificationsPlugin.zonedSchedule(
           alarmId,
-          'weekly scheduled notification title',
-          'weekly scheduled notification body',
-          _nextInstanceOfWeekday(time, daysOfWeek.indexOf(day)),
+          'THE ALARM\'S RINGING!',
+          'WAKE UP',
+          _nextInstanceOfWeekday(time, daysOfWeek.indexOf(day) + 1),
           const NotificationDetails(
             android: AndroidNotificationDetails(
-              'weekly notification channel id',
-              'weekly notification channel name',
-              'weekly notificationdescription',
+              '42',
+              'Better alarm clock',
+              'Made with flutter',
               fullScreenIntent: true,
               playSound: false,
               importance: Importance.high,

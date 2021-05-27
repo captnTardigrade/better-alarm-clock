@@ -1,3 +1,4 @@
+import 'package:better_alarm_clock/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import 'package:provider/provider.dart';
@@ -93,9 +94,7 @@ class _EditAlarmState extends State<EditAlarm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Better alarm clock'),
-      ),
+      appBar: buildAppBar(context),
       body: FutureBuilder(
         future: _alarmsFuture,
         builder: (context, snapshot) {
@@ -125,11 +124,7 @@ class _EditAlarmState extends State<EditAlarm> {
                     child: Text(
                       _timeOfDay?.format(context) ??
                           initialTime.format(context),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize:
-                            Theme.of(context).textTheme.headline2!.fontSize,
-                      ),
+                      style: Theme.of(context).textTheme.headline2,
                       textAlign: TextAlign.center,
                     ),
                   ),

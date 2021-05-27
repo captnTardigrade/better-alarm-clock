@@ -19,10 +19,19 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   String? _payload;
   bool _isInit = true;
   var numRingTimes = 0;
+
   @override
   void initState() {
     super.initState();
-    if (_isInit) FlutterRingtonePlayer.playAlarm(volume: 1);
+    if (_isInit) {
+      FlutterRingtonePlayer.playAlarm(volume: 1);
+      _payload = widget.payload;
+      puzzle = MathPuzzleGeneration(
+        AlarmsProvider.getMathChallengeType(
+          int.parse(_payload!),
+        ),
+      ).generatePuzzle();
+    }
     _isInit = false;
   }
 
@@ -60,13 +69,6 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final payload = ModalRoute.of(context)?.settings.arguments as String?;
-    _payload = payload ?? 'Failed';
-    puzzle = MathPuzzleGeneration(
-      AlarmsProvider.getMathChallengeType(
-        int.parse(_payload!),
-      ),
-    ).generatePuzzle();
     numRingTimes = puzzle['numTimes'];
     final puzzleText = (puzzle['numbers'] as List<int>).join(' + ');
     return WillPopScope(
