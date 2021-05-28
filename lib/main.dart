@@ -73,7 +73,14 @@ Future<void> main() async {
           textTheme: Typography.material2018().white,
           fontFamily: GoogleFonts.roboto().fontFamily,
           canvasColor: Colors.black,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
+          textSelectionTheme: TextSelectionThemeData(
+            selectionHandleColor: Colors.purple,
+            cursorColor: Colors.white,
+            selectionColor: Colors.purple[50],
+          ),
           timePickerTheme: TimePickerThemeData(
             backgroundColor: Colors.black,
             dialHandColor: Colors.purple,
@@ -85,9 +92,7 @@ Future<void> main() async {
           ),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-              textStyle: TextStyle(
-                color: Theme.of(context).primaryColor,
-              ),
+              primary: Color(0xffBB86FC),
             ),
           ),
         ),

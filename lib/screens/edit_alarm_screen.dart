@@ -181,6 +181,10 @@ class _EditAlarmState extends State<EditAlarm> {
               ),
               NumberPicker(
                 infiniteLoop: true,
+                selectedTextStyle:
+                    Theme.of(context).textTheme.headline5!.copyWith(
+                          color: Color(0xff03DAC5),
+                        ),
                 axis: Axis.horizontal,
                 minValue: 3,
                 maxValue: 25,
@@ -188,6 +192,9 @@ class _EditAlarmState extends State<EditAlarm> {
                 onChanged: (value) => setState(() {
                   _numPuzzles = value;
                 }),
+                textStyle: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
               Text(
                 'Math puzzle level',
