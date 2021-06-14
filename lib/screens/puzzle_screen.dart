@@ -76,23 +76,48 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Colors.blue,
-        body: Container(
-          height: MediaQuery.of(context).size.height * 0.25,
-          margin: const EdgeInsets.only(
-            top: 150,
-            left: 10,
-            right: 10,
-          ),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Form(
-            key: _form,
-            child: SingleChildScrollView(
-              child: Column(
+        body: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.35,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Form(
+              key: _form,
+              child: ListView(
                 children: [
+                  Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(10),
+                            right: Radius.circular(10),
+                          ),
+                          color: Colors.yellow,
+                        ),
+                        child: FractionallySizedBox(
+                          widthFactor: _numTimes / (numRingTimes + 1),
+                        ),
+                        height: 15,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        height: 15,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     puzzleText,
                     textAlign: TextAlign.center,
@@ -101,9 +126,20 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                         ),
                   ),
                   TextFormField(
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          color: Colors.black,
+                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                          color: Colors.red,
                         ),
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Color(0xff2296F3),
+                        ),
+                      ),
+                    ),
+                    cursorColor: Colors.red,
+                    cursorHeight: 25,
                     keyboardType: TextInputType.number,
                     controller: _textController,
                     focusNode: _focusNode,
@@ -125,6 +161,16 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                       _onFinished();
                     },
                     autofocus: true,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    '${_numTimes + 1}/${numRingTimes + 1}',
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Colors.black,
+                        ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
